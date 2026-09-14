@@ -1,36 +1,24 @@
 import java.util.Objects;
 
-public class Actor {
-
-    public enum Gender {
-        MALE("Мужской"),
-        FEMALE("Женский");
-
-        private final String title;
-        Gender(String title) {
-            this.title = title;
-        }
-        @Override
-        public String toString() {
-            return title;
-        }
-    }
-
-    public String name;
-    public String surname;
-    public Gender gender;
-    public double height;
+public class Actor extends Person {
+    private double height;
 
     public Actor(String name, String surname, Gender gender, double height) {
-        this.name = name;
-        this.surname = surname;
-        this.gender = gender;
+        super(name, surname, gender);
+        this.height = height;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
         this.height = height;
     }
 
     @Override
     public String toString() {
-        return  name = " " + surname + " (Рост: " + height + "м, Пол: " + gender + ")";
+        return name + " " + surname + " (Рост: " + height + "м, Пол: " + gender + ")";
     }
 
     @Override

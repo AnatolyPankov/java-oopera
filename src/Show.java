@@ -1,35 +1,58 @@
-import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Show {
-
-    public enum Genre {
-        DRAMA("Драма"),
-        OPERA("Опера"),
-        BALLET("Баллет");
-
-        private final String name;
-        Genre(String name) {
-            this.name = name;
-        }
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
-    public String title;
-    public int duration;
-    public Director director;
-    public List<Actor> listOfActors;
-    public Genre genre;
+    protected String title;
+    protected int duration;
+    protected Director director;
+    protected List<Actor> listOfActors;
+    protected Genre genre;
 
     public Show(String title, int duration, Director director, List<Actor> listOfActors, Genre genre) {
         this.title = title;
         this.duration = duration;
         this.director = director;
         this.listOfActors = new ArrayList<>(listOfActors);
+        this.genre = genre;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public void setDirector(Director director) {
+        this.director = director;
+    }
+
+    public List<Actor> getListOfActors() {
+        return listOfActors;
+    }
+
+    public void setListOfActors(List<Actor> listOfActors) {
+        this.listOfActors = new ArrayList<>(listOfActors);
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 
@@ -50,18 +73,45 @@ public class Show {
 
     public void addActor(Actor newActor) {
         if (newActor != null) {
-            listOfActors.add(newActor);
-            System.out.println("Актёр " + newActor.name + " " + newActor.surname + " успешно добавлен");
+            if (listOfActors.contains(newActor)) {
+                System.out.println("Предупреждение: Актёр " + newActor.getName() + " " + newActor.getSurname() +
+                        " уже участвует в спектакле \"" + title + "\"!");
+            } else {
+                listOfActors.add(newActor);
+                String actorWord = (newActor.getGender() == Gender.FEMALE) ? "Актриса" : "Актёр";
+                String statusWord = (newActor.getGender() == Gender.FEMALE) ? "успешно добавлена" : "успешно добавлен";
+                System.out.println(actorWord + " " + newActor.getName() + " " + newActor.getSurname() +
+                        " " + statusWord + " в спектакль \"" + title + "\".");
+            }
         }
     }
 
-    public void replaceActor(Actor targetActor, Actor replacementActor) {
-        int index = listOfActors.indexOf(targetActor);
-        if (index != -1) {
-            listOfActors.set(index, replacementActor);
-            System.out.println("Актёр " + targetActor.name + " " + targetActor.surname + " успешно заменён на " + replacementActor.name + replacementActor.surname);
+    public void replaceActor(Actor actor, String previousActorSurname) {
+        if (actor == null || previousActorSurname == null) {
+            System.out.println("Ошибка: передан пустой актёр или некорректная фамилия для замены");
+            return;
+        }
+
+        int countMatches = 0;
+        int indexToReplace = -1;
+
+        for (int i = 0; i < listOfActors.size(); i++) {
+            if (listOfActors.get(i).getSurname().equalsIgnoreCase(previousActorSurname)) {
+                countMatches++;
+                indexToReplace = i;
+            }
+        }
+
+        if (countMatches == 0) {
+            System.out.println("Ошибка замены: Актёр с фамилией \"" + previousActorSurname + "\" не найден в этом спектакле.");
+        } else if (countMatches > 1) {
+            System.out.println("Ошибка замены: В спектакле \"" + title + "\" найдено несколько актёров с фамилией \""
+                    + previousActorSurname + "\". Замена отменена для предотвращения ошибки.");
         } else {
-            System.out.println("Актёр " + targetActor.name + " " + targetActor.surname + " не найден в этом спектакле");
+            Actor oldActor = listOfActors.get(indexToReplace);
+            listOfActors.set(indexToReplace, actor);
+            System.out.println("Актёр " + oldActor.getName() + " " + oldActor.getSurname() +
+                    " успешно заменён на " + actor.getName() + " " + actor.getSurname());
         }
     }
 }
